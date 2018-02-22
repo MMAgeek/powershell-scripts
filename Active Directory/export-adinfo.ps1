@@ -69,7 +69,16 @@ if (!(Test-Path -Path $ExportDir )) {
 Get-ADUser -Properties * -Filter * | Select-Object SamAccountName, GivenName, Surname, DistinguishedName, ProfilePath, ScriptPath, HomeDirectory, HomeDrive | Export-Csv -Path $UsersFile -NoTypeInformation   
 
 ##### Exports the domains OU structure ####
-Get-ADOrganizationalUnit -filter * | Select-Object Name, DistinguishedName | Export-csv -path $OUsFile -NoTypeInformation 
+$OUs = Get-ADOrganizationalUnit -filter * | Select-Object Name, DistinguishedName
+Add-Content -Path $OUsFile  -Value '"Name","Path"'
+foreach ($OU in $OUs) {
+    $OUName = $OU.Name
+    $OUParent = (([adsi]"LDAP://$($OU.DistinguishedName)").Parent).Substring(7)
+    $tabledata = @(
+        "`"$OUName`",`"$OUParent`""
+    )
+    $tabledata | Add-content -Path $OUsFile 
+}
 
 #### Exports Group names and their members ####
 # Create empty array
