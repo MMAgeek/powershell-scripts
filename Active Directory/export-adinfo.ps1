@@ -20,10 +20,10 @@
   HTML files for GPOs
 
 .NOTES
-  Version:        1.0
+  Version:        1.1
   Author:         Arran Martindale
-  Creation Date:  16/02/2018
-  Purpose/Change: Initial script development
+  Creation Date:  15/07/2018
+  Purpose/Change: Resolved GPO export issue
 
 .EXAMPLE
 ./export-adinfo.ps1
@@ -138,7 +138,7 @@ $GPOs = get-GPO -All
 # Export all the group policy objects as html files
 foreach ($gpo in $GPOs) {
 $GpoName = $gpo.DisplayName
-    Get-GPOReport -ReportType "html" -Path "$GpoDir\$GpoName.html" -All
+    Get-GPOReport -Name $GpoName -ReportType "html" -Path "$GpoDir\$GpoName.html"
 }
 
 # Notify that the script is complete
